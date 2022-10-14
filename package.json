@@ -3,6 +3,7 @@
   "version": "0.0.1-alpha.1",
   "description": "React components",
   "main": "dist/index.js",
+  "files": ["dist"],
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/@tuhinatha"
   },
@@ -25,7 +26,10 @@
     "@types/react-dom": "^18.0.6",
     "keycloak-js": "^19.0.3",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "typescript": "^4.8.3"
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "rimraf": "^3.0.2",
+    "typescript": "^4.8.4"
   }
 }
