@@ -1,0 +1,32 @@
+name: Check on pull request
+
+on:
+  pull_request:
+    types: [open, synchronize]
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: "Checkout"
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    # Setup .npmrc file to publish to npm
+    - name: "Use NodeJS 16.15.0"
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16.15.0'
+        registry-url: 'https://npm.pkg.github.com'
+        # Defaults to the user or organization that owns the workflow file
+        scope: '@tuhinatha'
+    
+    - name: "Setup npm"
+      run: |
+        npm ci
+
+    - name: "Run tests"
+      run: |
+        npm run test

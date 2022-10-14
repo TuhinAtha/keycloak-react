@@ -1,0 +1,35 @@
+name: Publish Package to npmjs
+on:
+  pull_request:
+    types: [closed]
+jobs:
+  publish:
+    if: github.event.pull_request.merged === true
+    runs-on: ubuntu-latest
+    steps:
+    - name: "Checkout"
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    # Setup .npmrc file to publish to npm
+    - name: "Use NodeJS 16.15.0"
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16.15.0'
+        registry-url: 'https://npm.pkg.github.com'
+        # Defaults to the user or organization that owns the workflow file
+        scope: '@tuhinatha'
+
+    - name: "Setup npm"
+      run: npm ci
+    
+    - name: "Setup npm"
+      run: npm run build
+
+    - name: "Version"
+      run: npm version pre-release
+
+    - name: "Publish"
+      run: npm publish
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
