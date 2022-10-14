@@ -19,17 +19,26 @@ jobs:
         registry-url: 'https://npm.pkg.github.com'
         # Defaults to the user or organization that owns the workflow file
         scope: '@tuhinatha'
-
+  
     - name: "Setup npm"
-      run: npm ci
+      run: |
+        npm ci
     
-    - name: "Setup npm"
-      run: npm run build
+    - name: "Build project"
+      run: |
+        npm run build
 
+    - name: "Setup git config"
+      run: |
+        git config user.name "GitHub Actions Bot"
+        git config user.email "<>"
+        
     - name: "Version"
-      run: npm version patch
+      run: |
+        npm version patch
 
     - name: "Publish"
-      run: npm publish
+      run: |
+        npm publish
       env:
         NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
