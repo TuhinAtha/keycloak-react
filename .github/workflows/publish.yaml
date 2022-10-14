@@ -27,7 +27,7 @@ jobs:
       run: npm run build
 
     - name: "Version"
-      run: npm version pre-release
+      run: npm version patch
 
     - name: "Publish"
       run: npm publish
