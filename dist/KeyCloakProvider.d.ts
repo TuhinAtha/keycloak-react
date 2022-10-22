@@ -1,6 +1,6 @@
 import React from 'react';
-import Keycloak, { KeycloakProfile } from 'keycloak-js';
-export declare const initKeycloak: (kc: Keycloak) => Promise<unknown>;
+import Keycloak, { KeycloakConfig, KeycloakProfile } from 'keycloak-js';
+export declare const createKeycloakInstance: (config: KeycloakConfig) => Promise<unknown>;
 export interface KeycloakContextType {
     keycloak: null | undefined | Keycloak;
     userProfile: null | undefined | KeycloakProfile;

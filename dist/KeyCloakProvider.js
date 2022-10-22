@@ -11,7 +11,15 @@ var __assign = (this && this.__assign) || function () {
 };
 import { jsx as _jsx } from "react/jsx-runtime";
 import React, { useEffect, useState } from 'react';
-export var initKeycloak = function (kc) {
+import Keycloak from 'keycloak-js';
+export var createKeycloakInstance = function (config) {
+    var kc;
+    if (config) {
+        kc = new Keycloak(config);
+    }
+    else {
+        kc = new Keycloak();
+    }
     return new Promise(function (resolve, reject) {
         kc.init({
             onLoad: 'check-sso',
@@ -21,6 +29,7 @@ export var initKeycloak = function (kc) {
             .then(function (authenticated) {
             if (!authenticated) {
                 console.log('user us not authenticated');
+                kc.login();
                 reject(kc);
             }
             else {
@@ -28,6 +37,7 @@ export var initKeycloak = function (kc) {
             }
         })
             .catch(function () {
+            kc.login();
             reject(kc);
         });
     });
@@ -53,6 +63,6 @@ export var KeycloakProvider = function (_a) {
             .catch(function (keycloak) {
             keycloak.login();
         });
-    });
+    }, []);
     return (_jsx(KeycloakContext.Provider, __assign({ value: { keycloak: keycloak, userProfile: userProfile } }, { children: Boolean(keycloak) && children })));
 };
