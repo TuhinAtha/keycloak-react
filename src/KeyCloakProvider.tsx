@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import Keycloak, { KeycloakConfig, KeycloakProfile } from 'keycloak-js'
 
 export const createKeycloakInstance = (config: KeycloakConfig) => {
-  let kc: Keycloak;
-  if(config) {
+  let kc: Keycloak
+  if (config) {
     kc = new Keycloak(config)
   } else {
     kc = new Keycloak()
@@ -53,22 +53,25 @@ export const KeycloakProvider = ({
 
   useEffect(() => {
     instance
-      .then((keycloak: Keycloak) => {
-        setKeycloak(keycloak)
-        keycloak
-          .loadUserProfile()
-          .then((profile) => {
-            setUserProfile(profile)
-          })
-          .catch(() => {
-            setUserProfile(null)
-          })
+      .then((kc: Keycloak) => {
+        setKeycloak(kc)
       })
-      .catch((keycloak: Keycloak) => {
-        setKeycloak(keycloak)
-        keycloak.login()
+      .catch((kc: Keycloak) => {
+        kc.login()
       })
   }, [])
+
+  useEffect(() => {
+    if (keycloak) {
+      keycloak.loadUserProfile()
+        .then((profile) => {
+          setUserProfile(profile)
+        })
+        .catch(() => {
+          setUserProfile(null)
+        })
+    }
+  }, [keycloak])
 
   return (
     <KeycloakContext.Provider value={{ keycloak, userProfile }}>
