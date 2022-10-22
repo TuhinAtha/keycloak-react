@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import Keycloak, { KeycloakProfile } from 'keycloak-js'
+import Keycloak, { KeycloakConfig, KeycloakProfile } from 'keycloak-js'
 
-export const initKeycloak = (kc: Keycloak) => {
+export const createKeycloakInstance = (config: KeycloakConfig) => {
+  let kc: Keycloak;
+  if(config) {
+    kc = new Keycloak(config)
+  } else {
+    kc = new Keycloak()
+  }
+
   return new Promise((resolve, reject) => {
     kc.init({
       onLoad: 'check-sso',
@@ -12,12 +19,14 @@ export const initKeycloak = (kc: Keycloak) => {
       .then((authenticated) => {
         if (!authenticated) {
           console.log('user us not authenticated')
+          kc.login()
           reject(kc)
         } else {
           resolve(kc)
         }
       })
       .catch(() => {
+        kc.login()
         reject(kc)
       })
   })
@@ -60,7 +69,8 @@ export const KeycloakProvider = ({
       .catch((keycloak: Keycloak) => {
         keycloak.login()
       })
-  })
+  }, [])
+
   return (
     <KeycloakContext.Provider value={{ keycloak, userProfile }}>
       {Boolean(keycloak) && children}
