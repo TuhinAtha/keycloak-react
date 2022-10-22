@@ -35,7 +35,7 @@ jobs:
         
     - name: "Version"
       run: |
-        npm version patch -no-git-tag-version
+        npm version patch
       env:
         NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -44,3 +44,7 @@ jobs:
         npm publish
       env:
         NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: "Publish to Git"
+      run: | 
+        git push
+        git push --tags
