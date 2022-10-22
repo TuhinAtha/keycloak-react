@@ -18,15 +18,13 @@ export const createKeycloakInstance = (config: KeycloakConfig) => {
     })
       .then((authenticated) => {
         if (!authenticated) {
-          console.log('user us not authenticated')
-          kc.login()
+          console.log('user is not authenticated')
           reject(kc)
         } else {
           resolve(kc)
         }
       })
       .catch(() => {
-        kc.login()
         reject(kc)
       })
   })
@@ -67,6 +65,7 @@ export const KeycloakProvider = ({
           })
       })
       .catch((keycloak: Keycloak) => {
+        setKeycloak(keycloak)
         keycloak.login()
       })
   }, [])
