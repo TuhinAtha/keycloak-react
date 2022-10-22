@@ -47,21 +47,23 @@ export var KeycloakProvider = function (_a) {
     var _c = useState(null), userProfile = _c[0], setUserProfile = _c[1];
     useEffect(function () {
         instance
-            .then(function (keycloak) {
-            setKeycloak(keycloak);
-            keycloak
-                .loadUserProfile()
+            .then(function (kc) {
+            setKeycloak(kc);
+        })
+            .catch(function (kc) {
+            kc.login();
+        });
+    }, []);
+    useEffect(function () {
+        if (keycloak) {
+            keycloak.loadUserProfile()
                 .then(function (profile) {
                 setUserProfile(profile);
             })
                 .catch(function () {
                 setUserProfile(null);
             });
-        })
-            .catch(function (keycloak) {
-            setKeycloak(keycloak);
-            keycloak.login();
-        });
-    }, []);
+        }
+    }, [keycloak]);
     return (_jsx(KeycloakContext.Provider, __assign({ value: { keycloak: keycloak, userProfile: userProfile } }, { children: Boolean(keycloak) && children })));
 };
