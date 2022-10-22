@@ -44,7 +44,7 @@ jobs:
         npm publish
       env:
         NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    -name "Publish to Git"
+    - name: "Publish to Git"
       run: | 
         git push
         git push --tags
