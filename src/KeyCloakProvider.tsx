@@ -12,8 +12,6 @@ export const createKeycloakInstance = (config: KeycloakConfig) => {
   return new Promise((resolve, reject) => {
     kc.init({
       onLoad: 'check-sso',
-      silentCheckSsoRedirectUri:
-        window.location.origin + '/silent-check-sso.html',
       pkceMethod: 'S256',
     })
       .then((authenticated) => {
@@ -55,23 +53,18 @@ export const KeycloakProvider = ({
     instance
       .then((kc: Keycloak) => {
         setKeycloak(kc)
-      })
-      .catch((kc: Keycloak) => {
-        kc.login()
-      })
-  }, [])
-
-  useEffect(() => {
-    if (keycloak) {
-      keycloak.loadUserProfile()
+        kc.loadUserProfile()
         .then((profile) => {
           setUserProfile(profile)
         })
         .catch(() => {
           setUserProfile(null)
         })
-    }
-  }, [keycloak])
+      })
+      .catch((kc: Keycloak) => {
+        kc.login()
+      })
+  }, [])
 
   return (
     <KeycloakContext.Provider value={{ keycloak, userProfile }}>

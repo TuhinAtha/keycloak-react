@@ -23,7 +23,6 @@ export var createKeycloakInstance = function (config) {
     return new Promise(function (resolve, reject) {
         kc.init({
             onLoad: 'check-sso',
-            silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
             pkceMethod: 'S256',
         })
             .then(function (authenticated) {
@@ -49,21 +48,17 @@ export var KeycloakProvider = function (_a) {
         instance
             .then(function (kc) {
             setKeycloak(kc);
-        })
-            .catch(function (kc) {
-            kc.login();
-        });
-    }, []);
-    useEffect(function () {
-        if (keycloak) {
-            keycloak.loadUserProfile()
+            kc.loadUserProfile()
                 .then(function (profile) {
                 setUserProfile(profile);
             })
                 .catch(function () {
                 setUserProfile(null);
             });
-        }
-    }, [keycloak]);
+        })
+            .catch(function (kc) {
+            kc.login();
+        });
+    }, []);
     return (_jsx(KeycloakContext.Provider, __assign({ value: { keycloak: keycloak, userProfile: userProfile } }, { children: Boolean(keycloak) && children })));
 };
