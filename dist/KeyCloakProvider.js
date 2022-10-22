@@ -28,8 +28,7 @@ export var createKeycloakInstance = function (config) {
         })
             .then(function (authenticated) {
             if (!authenticated) {
-                console.log('user us not authenticated');
-                kc.login();
+                console.log('user is not authenticated');
                 reject(kc);
             }
             else {
@@ -37,7 +36,6 @@ export var createKeycloakInstance = function (config) {
             }
         })
             .catch(function () {
-            kc.login();
             reject(kc);
         });
     });
@@ -61,6 +59,7 @@ export var KeycloakProvider = function (_a) {
             });
         })
             .catch(function (keycloak) {
+            setKeycloak(keycloak);
             keycloak.login();
         });
     }, []);
