@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import Keycloak, { KeycloakConfig, KeycloakProfile } from 'keycloak-js'
 
-export const createKeycloakInstance = (config: KeycloakConfig) => {
+export const createKeycloakInstance = (
+  config?: KeycloakConfig
+): Promise<Keycloak> => {
   let kc: Keycloak
   if (config) {
     kc = new Keycloak(config)
@@ -12,8 +14,6 @@ export const createKeycloakInstance = (config: KeycloakConfig) => {
   return new Promise((resolve, reject) => {
     kc.init({
       onLoad: 'check-sso',
-      silentCheckSsoRedirectUri:
-        window.location.origin + '/silent-check-sso.html',
       pkceMethod: 'S256',
     })
       .then((authenticated) => {
@@ -40,38 +40,30 @@ export const KeycloakContext = React.createContext<KeycloakContextType | null>(
 )
 
 export type KeycloakProviderPropsType = {
-  instance: Promise<Keycloak>
   children: React.ReactNode
 }
 
 export const KeycloakProvider = ({
-  instance,
   children,
 }: KeycloakProviderPropsType): JSX.Element => {
   const [keycloak, setKeycloak] = useState<Keycloak | null>(null)
   const [userProfile, setUserProfile] = useState<KeycloakProfile | null>(null)
 
   useEffect(() => {
-    instance
-      .then((kc: Keycloak) => {
+    const initKeycloak = async () => {
+      try {
+        const kc = await createKeycloakInstance()
         setKeycloak(kc)
-      })
-      .catch((kc: Keycloak) => {
-        kc.login()
-      })
-  }, [])
-
-  useEffect(() => {
-    if (keycloak) {
-      keycloak.loadUserProfile()
-        .then((profile) => {
-          setUserProfile(profile)
-        })
-        .catch(() => {
-          setUserProfile(null)
-        })
+        const profile = await kc.loadUserProfile()
+        setUserProfile(profile)
+      } catch (kc) {
+        if (typeof kc === 'object' && kc !== null && 'login' in kc) {
+          (kc as Keycloak).login()
+        }
+      }
     }
-  }, [keycloak])
+    initKeycloak()
+  }, [])
 
   return (
     <KeycloakContext.Provider value={{ keycloak, userProfile }}>
